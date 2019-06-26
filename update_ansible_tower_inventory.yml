@@ -4,7 +4,6 @@
   vars:
     credfile: "private/creds.yml"
     vm_fq_hostname: "ERROR-ENTRY-NEED-TO-SPECIFY"
-#    tower_group_url: "https://tower-fedsledsatprinz-7wh0iheq.srv.ravcloud.com/api/v2/groups/4/hosts/"
     tower_group_url: "https://tower.example.com/api/v2/groups/4/hosts/"
 
   tasks:
