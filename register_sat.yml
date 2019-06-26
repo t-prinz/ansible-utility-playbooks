@@ -1,0 +1,14 @@
+---
+- name: Register system with Satellite
+  hosts: "{{ target_host | default('NO_HOSTS')}}"
+  remote_user: root
+
+  tasks:
+
+    - name: Ensure Satellite registration
+      include_role:
+        name: satellite_reg
+      vars:
+         satellite_reg_servername: sat.example.com
+         satellite_reg_organization: "Aero"
+         satellite_reg_activation_key: "RHEL8-Activation-Key"
