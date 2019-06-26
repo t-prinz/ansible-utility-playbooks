@@ -1,0 +1,64 @@
+---
+- name: Provision a new VM
+  hosts: localsystem
+#  become: True
+  vars:
+    credfile: "private/creds.yml"
+    vm_fq_hostname: "ERROR-ENTRY-NEED-TO-SPECIFY"
+    tower_group_url: "https://tower-fedsledsatprinz-7wh0iheq.srv.ravcloud.com/api/v2/groups/4/hosts/"
+
+  tasks:
+
+    - name: Check for credentials file
+      stat:
+        path: "{{ credfile }}"
+      register: stat_results
+
+    - name: Define credentials using local file
+      block:
+
+      - name: Include variable definitions from local file
+        include_vars:
+          file: "{{ credfile }}"
+
+      - name: Define Ansible Tower credentials based on local file
+        set_fact:
+          at_rest_user: "{{ cf_tower_user }}"
+          at_rest_password: "{{ cf_tower_password }}"
+
+      when: stat_results.stat.exists
+
+    - name: Define credentials using Ansible Tower custom credentials
+      block:
+
+      - name: Define Ansible Tower credentials based on custom credential
+        set_fact:
+          at_rest_user: "{{ at_tower_user }}"
+          at_rest_password: "{{ at_tower_password }}"
+
+      when: not stat_results.stat.exists
+
+    - name: Add host to Ansible Tower group
+      uri:
+        url: "{{ tower_group_url }}"
+        method: POST
+        force_basic_auth: yes
+        user: "{{ at_rest_user}}"
+        password: "{{ at_rest_password }}"
+        validate_certs: No
+        body_format: json
+        body:
+          name: "{{ vm_fq_hostname }}"
+          description: ""
+          enabled: true
+          instance_id: ""
+          variables: ""
+        status_code:
+          - 200
+          - 201
+          - 202
+      register: add_to_group_status
+
+#    - name: add_to_group_status
+#      debug:
+#        var: add_to_group_status.json
