@@ -3,7 +3,7 @@
   hosts: "{{ sat_hostname | default('NO_HOSTS')}}"
   remote_user: root
   vars:
-    base_discovery_image: "/usr/share/foreman-discovery-image/custom-discovery-image.iso"
+    base_discovery_image: "/usr/share/foreman-discovery-image/foreman-discovery-image-3.5.4-2.iso"
     src_discovery_image_dir: "/root/Content/discovery-isos"
     custom_discovery_image_name: "CUSTOM-SATELLITE-DISCOVERY.iso"
     dest_discovery_image_dir: "/root/Content/discovery-isos"
