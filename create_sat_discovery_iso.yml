@@ -18,7 +18,8 @@
   tasks:
 
     - name: Build the custom image
-      command: "discovery-remaster {{ base_discovery_image }} 'proxy.url={{ proxy_url }} proxy.type={{ proxy_type }} fdi.pxmac={{ fdi_pxmac }} fdi.pxip={{ fdi_pxip }} fdi.pxgw={{ fdi_pxgw }} fdi.pxdns={{ fdi_pxdns }} fdi.pxauto={{ fdi_pxauto }}' {{ src_discovery_image_dir }}/{{ custom_discovery_image_name }}"
+      command: "discovery-remaster {{ base_discovery_image }} 'proxy.url={{ proxy_url }} proxy.type={{ proxy_type }} fdi.pxip={{ fdi_pxip }} fdi.pxgw={{ fdi_pxgw }} fdi.pxdns={{ fdi_pxdns }} fdi.pxauto={{ fdi_pxauto }}' {{ src_discovery_image_dir }}/{{ custom_discovery_image_name }}"
+#      command: "discovery-remaster {{ base_discovery_image }} 'proxy.url={{ proxy_url }} proxy.type={{ proxy_type }} fdi.pxmac={{ fdi_pxmac }} fdi.pxip={{ fdi_pxip }} fdi.pxgw={{ fdi_pxgw }} fdi.pxdns={{ fdi_pxdns }} fdi.pxauto={{ fdi_pxauto }}' {{ src_discovery_image_dir }}/{{ custom_discovery_image_name }}"
       register: build_status
 
 #    - name: Print
