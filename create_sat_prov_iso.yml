@@ -1,0 +1,43 @@
+---
+- name: Create Satellite discovery ISO
+  hosts: "{{ sat_hostname | default('NO_HOSTS')}}"
+  remote_user: root
+  vars:
+    base_discovery_image: "/usr/share/foreman-discovery-image/custom-discovery-image.iso"
+    src_discovery_image_dir: "/root/Content/discovery-isos"
+    custom_discovery_image_name: "CUSTOM-SATELLITE-DISCOVERY.iso"
+    dest_discovery_image_dir: "/root/Content/discovery-isos"
+    proxy_url: "https://sat.example.com:9090"
+    proxy_type: "proxy"
+    fdi_pxmac:
+    fdi_pxip:
+    fdi_pxgw:
+    fdi_pxdns:
+    fdi_pxauto: 1
+
+  tasks:
+
+    - name: Build the custom image
+      command: "discovery-remaster {{ base_discovery_image }} 'proxy.url={{ proxy_url }} proxy.type={{ proxy_type }} fdi.pxmac={{ fdi_pxmac }} fdi.pxip={{ fdi_pxip }} fdi_pxgw={{ fdi_pxgw }} fdi.pxdns={{ fdi_pxdns }} fdi.pxauto={{ fdi_pxauto }}' {{ src_discovery_image_dir }}/{{ custom_discovery_image_name }}"
+      register: build_status
+
+#    - name: Print
+#      debug:
+#        var: build_status
+
+    - name: Transfer custom image from Satellite server to KVM server
+      command: "scp {{ src_discovery_image_dir }}/{{ custom_discovery_image_name }} root@kvm.aeronet.io:{{ dest_discovery_image_dir }}/{{ custom_discovery_image_name }}"
+
+#    Need to figure how to use copy or synchronize
+
+#    - name: Copy custom image to KVM server
+#      copy:
+#        dest: "{{ dest_discovery_image_dir }}/{{ custom_discovery_image_name }}"
+#        src: "{{ src_discovery_image_dir }}/{{ custom_discovery_image_name }}"
+
+#    - name: Transfer custom image from Satellite server to KVM server
+#      synchronize:
+#        src: "{{ src_discovery_image_dir }}"
+#        dest: "{{ dest_discovery_image_dir }}"
+#        mode: pull
+#      delegate_to: kvm.aeronet.io
