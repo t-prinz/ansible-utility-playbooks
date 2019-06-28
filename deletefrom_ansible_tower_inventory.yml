@@ -1,0 +1,140 @@
+---
+- name: Delete host from Ansible Tower inventory
+  hosts: localsystem
+  vars:
+    credfile: "private/creds.yml"
+    vm_fq_hostname: "ERROR-ENTRY-NEED-TO-SPECIFY"
+    tower_hostname: "tower.example.com"
+    tower_inventory_name: "Demo Inventory"
+    tower_group_url: "https://tower.example.com/api/v2/groups/4/hosts/"
+    tower_inventory_url: "https://tower.example.com/api/v2/inventories/"
+
+  tasks:
+
+    - name: Check for credentials file
+      stat:
+        path: "{{ credfile }}"
+      register: stat_results
+
+    - name: Define credentials using local file
+      block:
+
+      - name: Include variable definitions from local file
+        include_vars:
+          file: "{{ credfile }}"
+
+      - name: Define Ansible Tower credentials based on local file
+        set_fact:
+          at_rest_user: "{{ cf_tower_user }}"
+          at_rest_password: "{{ cf_tower_password }}"
+
+      when: stat_results.stat.exists
+
+    - name: Define credentials using Ansible Tower custom credentials
+      block:
+
+      - name: Define Ansible Tower credentials based on custom credential
+        set_fact:
+          at_rest_user: "{{ at_tower_user }}"
+          at_rest_password: "{{ at_tower_password }}"
+
+      when: not stat_results.stat.exists
+
+    - name: Print host to delete
+      debug:
+        msg: " Host to delete is {{ vm_fq_hostname }}"
+
+    - name: Delete host from inventory
+      tower_host:
+        inventory: "{{ tower_inventory_name }}"
+        name: "{{ vm_fq_hostname }}"
+        state: absent
+        tower_host: "{{ tower_hostname }}"
+        tower_password: "{{ at_rest_password }}"
+        tower_username: "{{ at_rest_user }}"
+        tower_verify_ssl: No
+
+#    - name: Get the list of inventories
+#      uri:
+#        url: "{{ tower_inventory_url }}"
+#        method: GET
+#        force_basic_auth: yes
+#        user: "{{ at_rest_user}}"
+#        password: "{{ at_rest_password }}"
+#        validate_certs: No
+#        status_code:
+#          - 200
+#          - 201
+#          - 202
+#      register: inventory_list_status
+
+#    - name: Print inventories and id
+#      debug:
+#        msg: "Inventory {{ item.name }} has id {{ item.id }}"
+#      with_items: "{{ inventory_list_status.json.results }}"
+
+#    - name: Get desired inventory id
+#      set_fact:
+#        inventory_id: "{{ item.id }}"
+#      when: item.name == tower_inventory_name
+#      with_items: "{{ inventory_list_status.json.results }}"
+
+#    - name: Print inventory id
+#      debug:
+#        var: inventory_id
+
+#    - name: Build API URL to get list of hosts in the inventory
+#      set_fact:
+#        tower_inventory_hosts_url: "{{ tower_inventory_url }}{{ inventory_id }}/hosts/"
+
+#    - name: Get the list of hosts
+#      uri:
+#        url: "{{ tower_inventory_hosts_url }}"
+#        method: GET
+#        force_basic_auth: yes
+#        user: "{{ at_rest_user}}"
+#        password: "{{ at_rest_password }}"
+#        validate_certs: No
+#        status_code:
+#          - 200
+#          - 201
+#          - 202
+#      register: host_list_status
+
+#    - name: Get desired host id
+#      set_fact:
+#        host_id: "{{ item.id }}"
+#      when: item.name == vm_fq_hostname
+#      with_items: "{{ host_list_status.json.results }}"
+
+#    - name: Print host to delete
+#      debug:
+#        msg: "Host id to delete {{ host_id }}"
+
+#    - name: Print list of hosts
+#      debug:
+#        var: host_list_status
+
+#    - name: Delete host from inventory
+#      uri:
+#        url: "{{ tower_inventory_hosts_url }}"
+#        method: POST
+#        force_basic_auth: yes
+#        user: "{{ at_rest_user}}"
+#        password: "{{ at_rest_password }}"
+#        validate_certs: No
+#        body_format: json
+#        body:
+#          id: "{{ host_id | int }}"
+##          id: 63
+#          disassociate: true
+#        status_code:
+#          - 200
+#          - 201
+#          - 202
+#          - 204
+#      register: delete_host_status
+
+#    - name: Print
+#      debug:
+#        var: delete_host_status
