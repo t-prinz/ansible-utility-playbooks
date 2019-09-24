@@ -1,0 +1,12 @@
+---
+- name: Register system to Red Hat Insights
+  hosts: "{{ target_host | default('NO_HOSTS')}}"
+  remote_user: root
+
+  tasks:
+    - name: Ensure Insights software is installed
+      package:
+        name: insights-client
+
+    - name: Ensure system is registered
+      command: insights-client --register
