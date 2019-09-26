@@ -1,6 +1,6 @@
 ---
 - name: Delete host from Ansible Tower inventory
-  hosts: localsystem
+  hosts: localhost
   vars:
     credfile: "private/creds.yml"
     vm_fq_hostname: "ERROR-ENTRY-NEED-TO-SPECIFY"
