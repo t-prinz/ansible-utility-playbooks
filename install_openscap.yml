@@ -1,0 +1,12 @@
+---
+- name: Install OpenSCAP framework
+  hosts: "{{ target_host | default('NO_HOSTS')}}"
+  remote_user: root
+
+  tasks:
+    - name: Ensure OpenSCAP software is installed
+      package:
+        name: "{{ item }}"
+      with_items:
+        - openscap-scanner
+        - scap-security-guide
