@@ -66,26 +66,26 @@
       debug:
         var: inventory_id
 
-#    - name: Add host to Ansible Tower group
-#      uri:
-#        url: "{{ tower_group_url }}"
-#        method: POST
-#        force_basic_auth: yes
-#        user: "{{ at_rest_user}}"
-#        password: "{{ at_rest_password }}"
-#        validate_certs: No
-#        body_format: json
-#        body:
-#          name: "{{ vm_fq_hostname }}"
-#          description: ""
-#          enabled: true
-#          instance_id: ""
-#          variables: ""
-#        status_code:
-#          - 200
-#          - 201
-#          - 202
-#      register: add_to_group_status
+    - name: Add host to Ansible Tower group
+      uri:
+        url: "{{ tower_group_url }}"
+        method: POST
+        force_basic_auth: yes
+        user: "{{ at_rest_user}}"
+        password: "{{ at_rest_password }}"
+        validate_certs: No
+        body_format: json
+        body:
+          name: "{{ vm_fq_hostname }}"
+          description: ""
+          enabled: true
+          instance_id: ""
+          variables: ""
+        status_code:
+          - 200
+          - 201
+          - 202
+      register: add_to_group_status
 
 #    - name: add_to_group_status
 #      debug:
