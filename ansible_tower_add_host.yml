@@ -1,0 +1,92 @@
+---
+- name: Add host to Ansible Tower inventory
+  hosts: localsystem
+  vars:
+    credfile: "../../.mycreds/democreds.yml"
+    vm_fq_hostname: "ERROR-NEED-TO-SPECIFY-HOST"
+    tower_inventory: "ERROR-NEED-TO-SPECIFY-INVENTORY"
+    tower_group: "ERROR-NEED-TO-SPECIFY-GROUP"
+    tower_base_url: "https://tower.example.com/api/v2/"
+    tower_group_url: "https://tower.example.com/api/v2/groups/4/hosts/"
+
+  tasks:
+
+    - name: Check for credentials file
+      stat:
+        path: "{{ credfile }}"
+      register: stat_results
+
+    - name: Define credentials using local file
+      block:
+
+      - name: Include variable definitions from local file
+        include_vars:
+          file: "{{ credfile }}"
+
+      - name: Define Ansible Tower credentials based on local file
+        set_fact:
+          at_rest_user: "{{ cf_tower_username }}"
+          at_rest_password: "{{ cf_tower_password }}"
+
+      when: stat_results.stat.exists
+
+    - name: Define credentials using Ansible Tower custom credentials
+      block:
+
+      - name: Define Ansible Tower credentials based on custom credential
+        set_fact:
+          at_rest_user: "{{ at_tower_username }}"
+          at_rest_password: "{{ at_tower_password }}"
+
+      when: not stat_results.stat.exists
+
+    - name: Get list of inventories
+      uri:
+        url: "{{ tower_base_url }}inventories/"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ at_rest_user}}"
+        password: "{{ at_rest_password }}"
+        validate_certs: No
+        status_code:
+          - 200
+      register: inventory_list
+
+    - name: Print inventory_list
+      debug:
+        var: inventory_list
+
+    - name: Set the inventory ID
+      set_fact:
+        inventory_id: "{{ item.id }}"
+      with_items: "{{ inventory_list.json.results }}"
+      when: item.name == "{{ tower_inventory }}"
+
+    - name: Print inventory ID
+      debug:
+        var: inventory_id
+
+#    - name: Add host to Ansible Tower group
+#      uri:
+#        url: "{{ tower_group_url }}"
+#        method: POST
+#        force_basic_auth: yes
+#        user: "{{ at_rest_user}}"
+#        password: "{{ at_rest_password }}"
+#        validate_certs: No
+#        body_format: json
+#        body:
+#          name: "{{ vm_fq_hostname }}"
+#          description: ""
+#          enabled: true
+#          instance_id: ""
+#          variables: ""
+#        status_code:
+#          - 200
+#          - 201
+#          - 202
+#      register: add_to_group_status
+
+#    - name: add_to_group_status
+#      debug:
+#        var: add_to_group_status.json
