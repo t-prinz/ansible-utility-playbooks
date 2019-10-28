@@ -1,6 +1,6 @@
 ---
 - name: Add host to Ansible Tower inventory
-  hosts: localsystem
+  hosts: localhost
   vars:
     credfile: "../../.mycreds/democreds.yml"
     vm_fq_hostname: "ERROR-NEED-TO-SPECIFY-HOST"

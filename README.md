@@ -13,3 +13,6 @@ ansible-playbook -i ../inventory ansible_tower_add_host.yml -e "vm_fq_hostname=t
 
 Add the host ttt.example.com to the inventory "RHV Infrastructure"
 ansible-playbook -i ../inventory ansible_tower_add_host.yml -e "vm_fq_hostname=ttt.example.com" -e 'tower_inventory="RHV Infrastructure"' 
+
+Delete the host ttt.example.com from the inventory "RHV Infrastructure"
+ansible-playbook -i ../inventory ansible_tower_delete_host.yml -e "vm_fq_hostname=ttt.example.com" -e 'tower_inventory="RHV Infrastructure"'
