@@ -44,6 +44,7 @@
 
     - name: Delete host from inventory
       tower_host:
+        enabled: no
         inventory: "{{ tower_inventory }}"
         name: "{{ vm_fq_hostname }}"
         state: absent
