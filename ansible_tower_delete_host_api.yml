@@ -1,0 +1,117 @@
+---
+- name: Delete host from Ansible Tower inventory
+  hosts: localhost
+  vars:
+    credfile: "../../.mycreds/democreds.yml"
+    vm_fq_hostname: "ERROR-NEED-TO-SPECIFY-HOST"
+    tower_inventory: "ERROR-NEED-TO-SPECIFY-INVENTORY"
+#    tower_group: ""
+#    host_defined: ""
+    tower_base_url: "https://tower.example.com/api/v2/"
+
+  tasks:
+
+    - name: Check for credentials file
+      stat:
+        path: "{{ credfile }}"
+      register: stat_results
+
+    - name: Define credentials using local file
+      block:
+
+      - name: Include variable definitions from local file
+        include_vars:
+          file: "{{ credfile }}"
+
+      - name: Define Ansible Tower credentials based on local file
+        set_fact:
+          at_rest_user: "{{ cf_tower_username }}"
+          at_rest_password: "{{ cf_tower_password }}"
+
+      when: stat_results.stat.exists
+
+    - name: Define credentials using Ansible Tower custom credentials
+      block:
+
+      - name: Define Ansible Tower credentials based on custom credential
+        set_fact:
+          at_rest_user: "{{ at_tower_username }}"
+          at_rest_password: "{{ at_tower_password }}"
+
+      when: not stat_results.stat.exists
+
+    - name: Get list of inventories
+      uri:
+        url: "{{ tower_base_url }}inventories/"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ at_rest_user}}"
+        password: "{{ at_rest_password }}"
+        validate_certs: No
+        status_code:
+          - 200
+      register: inventory_list
+
+    - name: Set the inventory ID
+      set_fact:
+        inventory_id: "{{ item.id }}"
+      with_items: "{{ inventory_list.json.results }}"
+      when: item.name == "{{ tower_inventory }}"
+
+    - name: Build host query URL
+      set_fact:
+        host_query_url: "{{ tower_base_url }}inventories/{{ inventory_id }}/hosts/"
+
+    - name: Get list of all hosts in inventory
+      uri:
+        url: "{{ host_query_url }}"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ at_rest_user}}"
+        password: "{{ at_rest_password }}"
+        validate_certs: No
+        status_code:
+          - 200
+      register: host_list
+
+    - name: Set the host ID
+      set_fact:
+        host_id: "{{ item.id|int }}"
+      with_items: "{{ host_list.json.results }}"
+      when: item.name == "{{ vm_fq_hostname }}"
+
+    - name: Block to delete the host
+      block:
+
+      - name: Print ID of host to delete
+        debug:
+          var: host_id
+
+      - name: Build up URL body (doing this to get around int issue)
+        set_fact:
+          body_content: "{{ body_content|default({}) | combine( { 'id': host_id|int, 'disassociate': true } ) }}"
+
+      - name: Print body content
+        debug:
+          msg: "{{ body_content }}"
+
+      - name: Print body content in json format
+        debug:
+          msg: "{{ body_content|to_json }}"
+
+      - name: Delete host from the inventory
+        uri:
+          url: "{{ host_query_url }}"
+          method: POST
+          force_basic_auth: yes
+          user: "{{ at_rest_user}}"
+          password: "{{ at_rest_password }}"
+          validate_certs: No
+          body_format: json
+          body: "{{ body_content|to_json }}"
+  #          id: '{{ host_id|int }}'
+  #          disassociate: true
+          status_code:
+            - 204
+        register: delete_from_inventory_status
+      when: host_id is defined
