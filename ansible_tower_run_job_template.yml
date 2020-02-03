@@ -1,0 +1,99 @@
+---
+- name: Run an Ansible Tower job template and specify the SCM branch tag
+  hosts: localhost
+  vars:
+    credfile: "../../.mycreds/democreds.yml"
+    job_template_name: "ERROR-NEED-TO-SPECIFY-INVENTORY"
+    desired_scm_branch: ""
+    tower_base_url: "https://tower.example.com/api/v2/"
+
+  tasks:
+
+    - name: Check for credentials file
+      stat:
+        path: "{{ credfile }}"
+      register: stat_results
+
+    - name: Define credentials using local file
+      block:
+
+      - name: Include variable definitions from local file
+        include_vars:
+          file: "{{ credfile }}"
+
+      - name: Define Ansible Tower credentials based on local file
+        set_fact:
+          at_rest_user: "{{ cf_tower_username }}"
+          at_rest_password: "{{ cf_tower_password }}"
+
+      when: stat_results.stat.exists
+
+    - name: Define credentials using Ansible Tower custom credentials
+      block:
+
+      - name: Define Ansible Tower credentials based on custom credential
+        set_fact:
+          at_rest_user: "{{ at_tower_username }}"
+          at_rest_password: "{{ at_tower_password }}"
+
+      when: not stat_results.stat.exists
+
+    - name: Get list of job templates
+      uri:
+        url: "{{ tower_base_url }}job_templates/"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ at_rest_user}}"
+        password: "{{ at_rest_password }}"
+        validate_certs: No
+        status_code:
+          - 200
+      register: job_template_list
+
+    - name: Set the job template ID
+      set_fact:
+        job_template_id: "{{ item.id }}"
+      with_items: "{{ job_template_list.json.results }}"
+      when: item.name == "{{ job_template_name }}"
+
+    - name: Block to launch the job template
+      block:
+
+      - name: Build job template launch URL
+        set_fact:
+          job_template_launch_url: "{{ tower_base_url }}job_templates/{{ job_template_id }}/launch/"
+
+      - name: Print job template ID
+        debug:
+          var: job_template_id
+
+      - name: Print job template launch URL
+        debug:
+          var: job_template_launch_url
+
+      - name: Build up URL body
+        set_fact:
+          body_content: "{{ body_content|default({}) | combine( { 'scm_branch': desired_scm_branch } ) }}"
+
+      - name: Print body content
+        debug:
+          msg: "{{ body_content }}"
+
+      - name: Print body content in json format
+        debug:
+          msg: "{{ body_content|to_json }}"
+
+      - name: Launch the job template
+        uri:
+          url: "{{ job_template_launch_url }}"
+          method: POST
+          force_basic_auth: yes
+          user: "{{ at_rest_user}}"
+          password: "{{ at_rest_password }}"
+          validate_certs: No
+          body_format: json
+          body: "{{ body_content|to_json }}"
+          status_code:
+            - 201
+        register: job_template_launch_status
+      when: job_template_id is defined
