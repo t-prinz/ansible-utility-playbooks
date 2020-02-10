@@ -99,6 +99,6 @@
 
       - name: Print job information
         debug:
-          msg: "Job info:  {{ job_template_launch_status }}"
+          msg: "Job info:  {{ job_template_launch_status.json.related.stdout }}"
 
       when: job_template_id is defined
