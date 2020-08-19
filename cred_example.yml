@@ -35,16 +35,8 @@
 
     - name: Print
       debug:
-        msg: "tower_password: {{ tower_password }}"
-
-    - name: Print
-      debug:
         msg: "tower_username: {{ tower_username }}"
 
     - name: Print
       debug:
         msg: "windows_admin_username: {{ windows_admin_username }}"
-
-    - name: Print
-      debug:
-        msg: "windows_admin_password: {{ windows_admin_password }}"
