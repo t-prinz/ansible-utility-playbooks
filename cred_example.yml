@@ -1,0 +1,68 @@
+---
+- name: Make use of Ansible vault information
+  hosts: localhost
+  gather_facts: False
+  vars:
+    credfile: "../../.mycreds/democreds.yml"
+
+  tasks:
+    - name: Check for credentials file
+      stat:
+        path: "{{ credfile }}"
+      register: stat_results
+
+    - name: Define credentials using local file
+      block:
+
+      - name: Include variable definitions from local file
+        include_vars:
+          file: "{{ credfile }}"
+
+      - name: Define Ansible Tower credentials based on local file
+        set_fact:
+          rhsm_activation_key: ""
+          rhsm_organization_id: ""
+          tower_password: "{{ cf_tower_password }}"
+          tower_username: "{{ cf_tower_username }}"
+          windows_admin_username: "{{ cf_windows_admin_username }}"
+          windows_admin_password: "{{ cf_windows_admin_password }}"
+
+      when: stat_results.stat.exists
+
+    - name: Define credentials using Ansible Tower custom credentials
+      block:
+
+      - name: Define Ansible Tower credentials based on custom credential
+        set_fact:
+          rhsm_activation_key: "{{ at_rhsm_activation_key }}"
+          rhsm_organization_id: "{{ at_rhsm_organization_id }}"
+          tower_password: "{{ at_tower_password }}"
+          tower_username: "{{ at_tower_username }}"
+          windows_admin_username: "{{ at_windows_admin_username }}"
+          windows_admin_password: "{{ at_windows_admin_password }}"
+
+      when: not stat_results.stat.exists
+
+    - name: Print
+      debug:
+        msg: "rhsm_activation_key: {{ rhsm_activation_key }}"
+
+    - name: Print
+      debug:
+        msg: "rhsm_organization_id: {{ rhsm_organization_id }}"
+
+    - name: Print
+      debug:
+        msg: "tower_password: {{ tower_password }}"
+
+    - name: Print
+      debug:
+        msg: "tower_username: {{ tower_username }}"
+
+    - name: Print
+      debug:
+        msg: "windows_admin_username: {{ windows_admin_username }}"
+
+    - name: Print
+      debug:
+        msg: "windows_admin_password: {{ windows_admin_password }}"
