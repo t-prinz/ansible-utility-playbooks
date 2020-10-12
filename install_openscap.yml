@@ -1,7 +1,7 @@
 ---
 - name: Install OpenSCAP framework
   hosts: "{{ target_host | default('NO_HOSTS')}}"
-  remote_user: root
+  become: True
 
   tasks:
     - name: Ensure OpenSCAP software is installed
