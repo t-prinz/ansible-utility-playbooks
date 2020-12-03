@@ -1,0 +1,43 @@
+---
+- name: Ensure systems are registered with access to required repositories
+  hosts: "{{ target_host | default('NO_HOSTS')}}"
+  become: True
+
+  tasks:
+    - name: Execute tasks to get the project and credential information
+      include_tasks: ../aws/get_project_cred_info_tasks.yml
+
+    - name: Define repositories to be enabled for RHEL 7
+      set_fact:
+        rhsm_repo_list:
+          - rhel-7-server-rpms
+      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "7"
+
+    - name: Define repositories to be enabled for RHEL 8
+      set_fact:
+        rhsm_repo_list:
+          - rhel-8-for-x86_64-baseos-rpms
+          - rhel-8-for-x86_64-appstream-rpms
+      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "8"
+
+    - name: Ensure RHSM registration
+      include_role:
+        name: rhportal_reg
+
+    - name: Ensure kernel is up-to-date; if so a reboot will occur
+      package:
+        name: kernel
+        state: latest
+      register: kernel_status
+
+    - name: Reboot server if needed
+      include_role:
+        name: myreboot
+      vars:
+        myreboot_timeout: 240
+      when: kernel_status.changed
+
+    - name: Ensure all packages are updated
+      package:
+        name: '*'
+        state: latest

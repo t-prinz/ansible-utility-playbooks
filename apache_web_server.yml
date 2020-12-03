@@ -1,0 +1,52 @@
+---
+- name: Install the apache web service
+  hosts: all
+  become: True
+  vars:
+    web_content: "Default Ansible web content."
+
+  tasks:
+    - name: Ensure firewalld is installed
+      package:
+        name: firewalld
+        state: installed
+
+    - name: Ensure firewalld is enabled and started
+      service:
+        name: firewalld
+        enabled: True
+        state: started
+
+    - name: Ensure firewall ports are open
+      firewalld:
+        immediate: True
+        permanent: True
+        service: "{{ item }}"
+        state: enabled
+      notify: Restart firewalld
+      with_items:
+        - "http"
+        - "https"
+
+    - name: Ensure apache is installed
+      package:
+        name: httpd
+        state: present
+      notify: Restart httpd
+
+    - name: Ensure message is in index.html file
+      copy:
+        content: "{{ web_content }}"
+        dest: /var/www/html/index.html
+
+  handlers:
+    - name: Restart firewalld
+      service:
+        name: firewalld
+        state: restarted
+
+    - name: Restart httpd
+      service:
+        enabled: True
+        name: httpd
+        state: restarted
