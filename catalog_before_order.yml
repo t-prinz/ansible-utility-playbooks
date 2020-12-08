@@ -10,5 +10,5 @@
         msg: "Pre-order playbook"
 
     - set_stats:
-      data:
-        expose_to_cloud_redhat_com_favorite_color: "Blue"
+        data:
+          expose_to_cloud_redhat_com_favorite_color: "Blue"

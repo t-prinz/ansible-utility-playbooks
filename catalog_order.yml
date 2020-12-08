@@ -13,5 +13,5 @@
         msg: "Your chosen color is {{favorite_color}}."
 
     - set_stats:
-      data:
-        expose_to_cloud_redhat_com_after_data: "{{favorite_color}}"
+        data:
+          expose_to_cloud_redhat_com_after_data: "{{favorite_color}}"
