@@ -1,0 +1,14 @@
+---
+# Example playbook to set and return a value for Ansible Automation Service Catalog
+# that can be used in the order playbook
+
+- name: Pre-order playbook
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - debug:
+        msg: "Pre-order playbook"
+
+    - set_stats:
+      data:
+        expose_to_cloud_redhat_com_favorite_color: "Blue"

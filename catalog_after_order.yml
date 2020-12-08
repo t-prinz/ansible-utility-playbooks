@@ -1,0 +1,12 @@
+---
+# Example after_order playbook to use a variable defined in the order playbook
+
+- name: Pre-order playbook
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - debug:
+        msg: "After-order playbook"
+
+    - debug:
+        msg: "The color you chose is {{ after_data }}."

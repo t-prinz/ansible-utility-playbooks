@@ -1,0 +1,17 @@
+---
+# Example order playbook for Ansible Automation Service Catalog that uses a value
+# specified in the before_order playbook
+
+- name: Order playbook
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - debug:
+        msg: "Order playbook"
+
+    - debug:
+        msg: "Your chosen color is {{favorite_color}}."
+
+    - set_stats:
+      data:
+        expose_to_cloud_redhat_com_after_data: "{{favorite_color}}"
