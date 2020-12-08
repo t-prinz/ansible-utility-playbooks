@@ -8,5 +8,12 @@
     - debug:
         msg: "After-order playbook"
 
-    - debug:
-        msg: "The color you chose is {{ after_data }}."
+    block:
+      - debug:
+          msg: "The color you chose is {{ after_data }}."
+    when: favorite_color is defined
+
+    block:
+      - debug:
+          msg: "Nothing was ordered..."
+    when: favorite_color is not defined

@@ -9,9 +9,16 @@
     - debug:
         msg: "Order playbook"
 
-    - debug:
-        msg: "Your chosen color is {{favorite_color}}."
+    block:
+      - debug:
+          msg: "Your chosen color is {{favorite_color}}."
 
-    - set_stats:
-        data:
-          expose_to_cloud_redhat_com_after_data: "{{favorite_color}}"
+      - set_stats:
+          data:
+            expose_to_cloud_redhat_com_after_data: "{{favorite_color}}"
+    when: favorite_color is defined
+
+    block:
+      - debug:
+          msg: "There is nothing to order..."
+    when: favorite_color is not defined
