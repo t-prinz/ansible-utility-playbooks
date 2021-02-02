@@ -9,5 +9,4 @@
       include_role:
         name: motd
       vars:
-        motd_array: 
-          - 'Default MOTD message set from the playbook. Override this variable (motd_array) to customize.'
+        custom_motd: "Default MOTD message set from the playbook. Override this variable (custom_motd) to customize."
