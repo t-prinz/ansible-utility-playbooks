@@ -1,0 +1,13 @@
+---
+- name: Apply a message of the day
+  hosts: all
+  become: True
+
+  tasks:
+
+    - name: Ensure the motd is applied
+      include_role:
+        name: motd
+      vars:
+        motd_array: 
+          - 'Default MOTD message set from the playbook. Override this variable (motd_array) to customize.'
