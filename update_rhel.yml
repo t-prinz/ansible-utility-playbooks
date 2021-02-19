@@ -1,0 +1,23 @@
+---
+- name: Update RHEL systems and reboot if needed
+  hosts: all
+  become: True
+
+  tasks:
+    - name: Ensure kernel is up-to-date; if so a reboot will occur
+      package:
+        name: kernel
+        state: latest
+      register: kernel_status
+
+    - name: Reboot server if needed
+      include_role:
+        name: myreboot
+      vars:
+        myreboot_timeout: 240
+      when: kernel_status.changed
+
+    - name: Ensure all packages are updated
+      package:
+        name: '*'
+        state: latest
