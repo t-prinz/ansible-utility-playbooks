@@ -1,6 +1,7 @@
 ---
 - name: Ensure systems are registered with access to required repositories
-  hosts: "{{ target_host | default('NO_HOSTS')}}"
+#  hosts: "{{ target_host | default('NO_HOSTS')}}"
+  hosts: all
   become: True
 
   tasks:
