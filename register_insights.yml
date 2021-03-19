@@ -1,9 +1,14 @@
 ---
 - name: Register system to Red Hat Insights
-  hosts: "{{ target_host | default('NO_HOSTS')}}"
-  remote_user: root
+#  hosts: "{{ target_host | default('NO_HOSTS')}}"
+  hosts: all
+  become: True
 
   tasks:
+    - name: Print inventory hostname
+      debug:
+        msg: "Inventory hostname is {{ inventory_hostname }}"
+
     - name: Ensure Insights software is installed
       package:
         name: insights-client
