@@ -7,11 +7,11 @@
     - name: Ensure proper software is installed
       package:
         name: "{{ item }}"
-        with_items:
-          - osbuild-composer
-          - composer-cli
-          - cockpit-composer
-          - bash-completion
+      with_items:
+        - osbuild-composer
+        - composer-cli
+        - cockpit-composer
+        - bash-completion
 
     - name: Ensure Image Builder is started and enabled on reboot
       service:
