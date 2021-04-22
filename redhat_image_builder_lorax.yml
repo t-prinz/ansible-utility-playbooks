@@ -1,0 +1,32 @@
+---
+- name: Ensure Image Composer is configured using lorax-composer backend
+  hosts: all
+  become: True
+
+  tasks:
+    - name: Ensure proper software is installed
+      package:
+        name: "{{ item }}"
+        with_items:
+          - lorax-composer
+          - composer-cli
+          - cockpit-composer
+          - bash-completion
+
+    - name: Ensure Image Builder is started and enabled on reboot
+      service:
+        enabled: True
+        name: osbuild-composer.socket
+        state: started
+
+    - name: Ensure web console is started and enabled on reboot
+      service:
+        enabled: True
+        name: cockpit.socket
+
+    - name: Ensure firewall is configured for the web console
+      ansible.posix.firewalld:
+        immediate: True
+        permanent: yes
+        service: cockpit
+        state: enabled
