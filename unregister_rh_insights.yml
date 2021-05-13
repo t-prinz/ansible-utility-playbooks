@@ -1,5 +1,5 @@
 ---
-- name: Ensure systems are unregistered from Insights
+- name: Ensure systems are unregistered from Red Hat Insights
 #  hosts: "{{ target_host | default('NO_HOSTS')}}"
   hosts: all
   become: True
