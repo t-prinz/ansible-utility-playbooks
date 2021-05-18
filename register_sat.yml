@@ -1,32 +1,33 @@
 ---
-- name: Register system with Satellite
+- name: Register a system with a Satellite server
   hosts: all
   become: True
 
   tasks:
 
-    - name: Block for RHEL 7 systems
-      block:
-
-      - name: Define RHEL 7 activation key
-        set_fact:
-          Activation_Key: "Development-RHEL-7server-AK"
-
-      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "7"
-
-    - name: Block for RHEL 8 systems
-      block:
-
-      - name: Define RHEL 8 activation key
-        set_fact:
-          Activation_Key: "Development-RHEL-8server-AK"
-
-      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "8"
+#    - name: Block for RHEL 7 systems
+#      block:
+#
+#      - name: Define RHEL 7 activation key
+#        set_fact:
+#          Activation_Key: "Development-RHEL-7server-AK"
+#
+#      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "7"
+#
+#    - name: Block for RHEL 8 systems
+#      block:
+#
+#      - name: Define RHEL 8 activation key
+#        set_fact:
+#          Activation_Key: "Development-RHEL-8server-AK"
+#
+#      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "8"
 
     - name: Ensure Satellite registration
       include_role:
         name: satellite_reg
       vars:
          satellite_reg_servername: sat.example.com
-         satellite_reg_organization: "Aero"
-         satellite_reg_activation_key: "{{ Activation_Key }}"
+         satellite_reg_organization: "Default"
+         satellite_reg_activation_key: "Specify_Your_Activation_Key"
+#         satellite_reg_activation_key: "{{ Activation_Key }}"
