@@ -1,8 +1,18 @@
 ---
+# Note: In order to pass in a boolean value on the command line, use this syntax (with the "=" sign)
+#
+# ansible-playbook register_rhportal.yml -e "perform_update=False"
+#
+#       If you use the ":" syntax, the variable will evaluate to True and the updates will be performed
+#
+#       ansible-playbook register_rhportal.yml -e "perform_update:False"
+
 - name: Ensure systems are registered with access to required repositories
 #  hosts: "{{ target_host | default('NO_HOSTS')}}"
   hosts: all
   become: True
+  vars:
+    perform_update: True
 
   tasks:
     - name: Execute tasks to get the project and credential information
@@ -25,20 +35,25 @@
       include_role:
         name: rhportal_reg
 
-    - name: Ensure kernel is up-to-date; if so a reboot will occur
-      package:
-        name: kernel
-        state: latest
-      register: kernel_status
+    - name: Perform an update, if desired
+      block:
 
-    - name: Reboot server if needed
-      include_role:
-        name: myreboot
-      vars:
-        myreboot_timeout: 240
-      when: kernel_status.changed
+      - name: Ensure kernel is up-to-date; if so a reboot will occur
+        package:
+          name: kernel
+          state: latest
+        register: kernel_status
 
-    - name: Ensure all packages are updated
-      package:
-        name: '*'
-        state: latest
+      - name: Reboot server if needed
+        include_role:
+          name: myreboot
+        vars:
+          myreboot_timeout: 240
+        when: kernel_status.changed
+
+      - name: Ensure all packages are updated
+        package:
+          name: '*'
+          state: latest
+
+      when: perform_update|bool
