@@ -13,5 +13,11 @@
       package:
         name: insights-client
 
-    - name: Ensure system is registered
-      command: insights-client --register
+#    - name: Ensure system is registered
+#      command: insights-client --register
+
+    - name: Ensure system is registered with Insights
+      include_role:
+        name: redhat.insights.insights_client
+      vars:
+        insights_display_name: "{{ inventory_hostname }}"
