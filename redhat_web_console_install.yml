@@ -1,0 +1,34 @@
+---
+- name: Ensure Red Hat Web Console (Cockpit) is installed and configured
+  hosts: all
+  become: True
+
+  tasks:
+    - name: Ensure proper software is installed
+      package:
+        name: "{{ cockpit_packages }}"
+      vars:
+        cockpit_packages:
+          - "cockpit*"
+          - composer-cli
+          - bash-completion
+          - firewalld
+
+    - name: Ensure Image Builder is started and enabled on reboot
+      service:
+        enabled: True
+        name: osbuild-composer.socket
+        state: started
+
+    - name: Ensure web console is started and enabled on reboot
+      service:
+        enabled: True
+        name: cockpit.socket
+        state: started
+
+    - name: Ensure firewall is configured for the web console
+      ansible.posix.firewalld:
+        immediate: True
+        permanent: yes
+        service: cockpit
+        state: enabled
