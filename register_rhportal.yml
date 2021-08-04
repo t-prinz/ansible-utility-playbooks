@@ -12,7 +12,7 @@
   hosts: all
   become: True
   vars:
-    perform_update: True
+    perform_update: False
 
   tasks:
     - name: Execute tasks to get the project and credential information
