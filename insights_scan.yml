@@ -1,0 +1,8 @@
+---
+- name: Initiate an Insights scan
+  hosts: all
+  become: True
+
+  tasks:
+    - name: Initiate scan
+      command: "insights-client"
