@@ -11,3 +11,4 @@
       with_items:
         - openscap-scanner
         - scap-security-guide
+        - bzip2
