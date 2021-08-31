@@ -13,23 +13,12 @@
   become: True
   vars:
     perform_update: False
+    rhportal_cred_vars: ""
 
   tasks:
-    - name: Execute tasks to get the project and credential information
-      include_tasks: ../aws/get_project_cred_info_tasks.yml
-
-    - name: Define repositories to be enabled for RHEL 7
-      set_fact:
-        rhsm_repo_list:
-          - rhel-7-server-rpms
-      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "7"
-
-    - name: Define repositories to be enabled for RHEL 8
-      set_fact:
-        rhsm_repo_list:
-          - rhel-8-for-x86_64-baseos-rpms
-          - rhel-8-for-x86_64-appstream-rpms
-      when: ansible_facts.distribution == "RedHat" and ansible_facts.distribution_major_version == "8"
+    - name: Include Red Hat portal credentials variables file
+      include_vars:
+        file: "{{ rhportal_cred_vars }}"
 
     - name: Ensure RHSM registration
       include_role:
