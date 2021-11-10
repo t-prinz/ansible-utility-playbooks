@@ -10,6 +10,6 @@
         name: satellite_reg
       vars:
          satellite_consumer_name: "{{ inventory_hostname }}"
-         satellite_reg_servername: sat.example.com
+         satellite_reg_servername: "Specify_Your_Satellite_Servername"
          satellite_reg_organization: "Default"
          satellite_reg_activation_key: "Specify_Your_Activation_Key"
