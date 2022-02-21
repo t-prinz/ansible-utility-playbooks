@@ -1,7 +1,6 @@
 ---
 - name: Register system to Red Hat Insights
-#  hosts: "{{ target_host | default('NO_HOSTS')}}"
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:

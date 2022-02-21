@@ -14,18 +14,12 @@
 # ansible-playbook register_rhportal.yml -e '{"rhportal_reg_rhsm_supplemental_repo_list":["jws-5-for-rhel-8-x86_64-rpms"]}'
 
 - name: Ensure systems are registered with access to required repositories
-#  hosts: "{{ target_host | default('NO_HOSTS')}}"
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
   vars:
     perform_update: False
-    rhportal_cred_vars: ""
 
   tasks:
-    - name: Include Red Hat portal credentials variables file
-      include_vars:
-        file: "{{ rhportal_cred_vars }}"
-
     - name: Ensure RHSM registration
       include_role:
         name: rhportal_reg
