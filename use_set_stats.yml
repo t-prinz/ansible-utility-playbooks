@@ -1,0 +1,10 @@
+---
+- name: Use a variable set with set_stats
+  hosts: "{{ hostlist | default('all') }}"
+  tasks:
+    - name: Print variable
+      debug:
+        var: hostlist
+
+    - name: Ping
+      ping:
