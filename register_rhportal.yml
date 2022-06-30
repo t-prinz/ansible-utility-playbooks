@@ -16,6 +16,7 @@
 - name: Ensure systems are registered with access to required repositories
   hosts: "{{ hostlist | default('all') }}"
   become: True
+  serial: 1
   vars:
     perform_update: False
 
