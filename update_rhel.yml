@@ -1,6 +1,6 @@
 ---
 - name: Update RHEL systems and reboot if needed
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:
