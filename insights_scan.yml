@@ -1,6 +1,6 @@
 ---
 - name: Initiate an Insights scan
-  hosts: all
+  hosts: hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:

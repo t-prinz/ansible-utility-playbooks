@@ -1,7 +1,6 @@
 ---
 - name: Install OpenSCAP framework
-  hosts: all
-#  hosts: "{{ target_host | default('NO_HOSTS')}}"
+  hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:
