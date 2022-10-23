@@ -1,9 +1,9 @@
 ---
 - name: Install the apache web service
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
   vars:
-    web_content: "Default Ansible web content."
+    web_content: "Default web content from {{ inventory_hostname }}"
 
   tasks:
     - name: Ensure firewalld is installed
