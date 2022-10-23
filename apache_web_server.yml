@@ -39,6 +39,10 @@
         content: "{{ web_content }}"
         dest: /var/www/html/index.html
 
+    - name: Show website address
+      debug:
+        msg: http://{{ ansible_host }}
+
   handlers:
     - name: Restart firewalld
       service:
