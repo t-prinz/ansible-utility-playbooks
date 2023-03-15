@@ -8,6 +8,19 @@
       debug:
         msg: "Inventory hostname is {{ inventory_hostname }}"
 
+    - name: Define packages to install for RHEL 8+ (include malware packages)
+      set_fact:
+        pkg_list:
+          - insights-client
+          - yara
+      when: ansible_facts.distribution_major_version != "7"
+
+    - name: Define packages to install for RHEL 7
+      set_fact:
+        pkg_list:
+          - insights-client
+      when: ansible_facts.distribution_major_version == "7"
+
     - name: Ensure Insights software is installed
       package:
         name: "{{ pkg_list }}"
@@ -19,18 +32,23 @@
     - name: Ensure system is registered
       command: insights-client --register
 
-    - name: Perform test malware scan
-      command: insights-client --collector malware-detection
+    - name: Block to enable malware detection for RHEL 8+ systems
+      block:
 
-    - name: Ensure test_scan is disabled in malware configuration file
-      lineinfile:
-        line: "test_scan: false"
-        path: /etc/insights-client/malware-detection-config.yml
-        regexp: "^test_scan: "
-        state: present
+        - name: Perform test malware scan
+          command: insights-client --collector malware-detection
 
-    - name: Perform malware scan
-      command: insights-client --collector malware-detection
+        - name: Ensure test_scan is disabled in malware configuration file
+          lineinfile:
+            line: "test_scan: false"
+            path: /etc/insights-client/malware-detection-config.yml
+            regexp: "^test_scan: "
+            state: present
+
+        - name: Perform malware scan
+          command: insights-client --collector malware-detection
+
+      when: ansible_facts.distribution_major_version != "7"
 
 #    - name: Ensure system is registered with Insights
 #      include_role:
