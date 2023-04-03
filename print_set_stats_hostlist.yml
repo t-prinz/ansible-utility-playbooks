@@ -7,5 +7,6 @@
   hosts: localhost
   tasks:
 
-    - debug:
-        msg: "hostlist: {{ hostlist }}"
+    - name: Print hostlist
+      debug:
+        msg: "hostlist: {{ hostlist | default('hostlist is not defined') }}"

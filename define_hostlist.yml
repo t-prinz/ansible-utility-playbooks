@@ -1,0 +1,12 @@
+---
+# Playbook that defines a variable (hostlist) that can be used in another playbook.
+#
+# This can be used as part of an AAP Workflow to pass a variable from one Template/playbook to the next.
+
+- name: Define a variable that can be used in another playbook
+  hosts: localhost
+  tasks:
+    - name: Define hostlist
+      set_stats:
+        data:
+          hostlist: "sample_hostlist"
