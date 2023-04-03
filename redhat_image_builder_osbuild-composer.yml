@@ -1,6 +1,6 @@
 ---
 - name: Ensure Image Composer is configured using osbuild-composer backend
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:

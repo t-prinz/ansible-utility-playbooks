@@ -1,6 +1,6 @@
 ---
 - name: Ensure Red Hat Web Console (Cockpit) is installed and configured
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:

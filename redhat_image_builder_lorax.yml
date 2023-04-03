@@ -1,6 +1,6 @@
 ---
 - name: Ensure Image Composer is configured using lorax-composer backend
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:

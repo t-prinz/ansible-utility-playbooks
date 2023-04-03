@@ -1,6 +1,6 @@
 ---
 - name: Register a system with a Satellite server
-  hosts: all
+  hosts: "{{ hostlist | default('all') }}"
   become: True
 
   tasks:
