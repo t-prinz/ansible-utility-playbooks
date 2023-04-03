@@ -1,0 +1,11 @@
+---
+# Playbook that prints a variable (hostlist) that was set in a previous playbook.
+#
+# This can be used as part of an AAP Workflow to pass a variable from one Template/playbook to the next.
+
+- name: Print a variable that was set in a previous playbook
+  hosts: localhost
+  tasks:
+
+    - debug:
+        msg: "hostlist: {{ hostlist }}"
