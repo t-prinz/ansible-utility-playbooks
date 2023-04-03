@@ -5,6 +5,10 @@
 
   tasks:
 
+    - name: Print registration info
+      debug:
+        msg: "Registering {{ inventory_hostname }} with Satellite server {{ satellite_reg_servername }}"
+
     - name: Ensure Satellite registration
       include_role:
         name: satellite_reg
@@ -13,3 +17,26 @@
 #         satellite_reg_servername: "{{ satellite_reg_servername }}"
 #         satellite_reg_organization: "{{ satellite_reg_organization }}"
 #         satellite_reg_activation_key: "{{ satellite_reg_activation_key }}"
+
+    - name: Print server public key info
+      debug:
+        msg: "Retrieving ssh public key from {{ satellite_reg_servername }} and installing to user {{ ansible_user }} for remote execution"
+
+    - name: Retrieve public key from the Satellite server
+      ansible.builtin.uri:
+        return_content: true
+        status_code:
+          - 200
+        url: "https://{{ satellite_reg_servername }}:9090/ssh/pubkey"
+      register: ssh_info
+
+    - name: Print ssh public key
+      debug:
+        var: ssh_info.content
+        verbosity: 1
+
+    - name: Populate the authorized_key file
+      ansible.posix.authorized_key:
+        key: "{{ ssh_info.content }}"
+        state: present
+        user: "{{ ansible_user }}"
