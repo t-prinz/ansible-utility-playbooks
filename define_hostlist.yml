@@ -6,6 +6,7 @@
 - name: Define a variable that can be used in another playbook
   hosts: localhost
   tasks:
+
     - name: Define hostlist
       set_stats:
         data:
