@@ -4,13 +4,6 @@
   become: True
 
   tasks:
-    - name: Ensure OpenSCAP software is installed
-      package:
-        name: "{{ item }}"
-      with_items:
-        - openscap-scanner
-        - scap-security-guide
-        - bzip2
 
     - name: Initiate scan
       command: "insights-client --compliance"
