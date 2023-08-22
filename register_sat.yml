@@ -1,4 +1,13 @@
 ---
+#
+#  For reference:  To get back to the default subscription manager config on a client
+#    subscription-manager config --server.hostname subscription.rhsm.redhat.com
+#    subscription-manager config --server.prefix "/subscription"
+#    subscription-manager config --rhsm.baseurl https://cdn.redhat.com
+#    subscription-manager config --rhsm.full_refresh_on_yum 0
+#    subscription-manager config --rhsm.package_profile_on_trans 0
+#    subscription-manager config --rhsm.repo_ca_cert /etc/rhsm/ca/redhat-uep.pem
+#
 - name: Register a system with a Satellite server
   hosts: "{{ hostlist | default('all') }}"
   become: True
