@@ -32,23 +32,23 @@
     - name: Ensure system is registered
       command: insights-client --register
 
-    - name: Block to enable malware detection for RHEL 8+ systems
-      block:
-
-        - name: Perform test malware scan
-          command: insights-client --collector malware-detection
-
-        - name: Ensure test_scan is disabled in malware configuration file
-          lineinfile:
-            line: "test_scan: false"
-            path: /etc/insights-client/malware-detection-config.yml
-            regexp: "^test_scan: "
-            state: present
-
-        - name: Perform malware scan
-          command: insights-client --collector malware-detection
-
-      when: ansible_facts.distribution_major_version != "7"
+#    - name: Block to enable malware detection for RHEL 8+ systems
+#      block:
+#
+#        - name: Perform test malware scan
+#          command: insights-client --collector malware-detection
+#
+#        - name: Ensure test_scan is disabled in malware configuration file
+#          lineinfile:
+#            line: "test_scan: false"
+#            path: /etc/insights-client/malware-detection-config.yml
+#            regexp: "^test_scan: "
+#            state: present
+#
+#        - name: Perform malware scan
+#          command: insights-client --collector malware-detection
+#
+#      when: ansible_facts.distribution_major_version != "7"
 
 #    - name: Ensure system is registered with Insights
 #      include_role:
