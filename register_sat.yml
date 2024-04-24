@@ -23,7 +23,7 @@
         name: satellite_reg
       vars:
          satellite_reg_consumer_name: "{{ inventory_hostname }}"
-         satellite_reg_server_insecure: enable
+         satellite_reg_server_insecure: disable
 #         satellite_reg_servername: "{{ satellite_reg_servername }}"
 #         satellite_reg_organization: "{{ satellite_reg_organization }}"
 #         satellite_reg_activation_key: "{{ satellite_reg_activation_key }}"
