@@ -24,7 +24,7 @@
       vars:
          satellite_reg_consumer_name: "{{ inventory_hostname }}"
          satellite_reg_server_insecure: 1
-#         satellite_reg_servername: "{{ satellite_reg_servername }}"
+         satellite_reg_servername: "https://{{ satellite_reg_servername }}"
 #         satellite_reg_organization: "{{ satellite_reg_organization }}"
 #         satellite_reg_activation_key: "{{ satellite_reg_activation_key }}"
 
