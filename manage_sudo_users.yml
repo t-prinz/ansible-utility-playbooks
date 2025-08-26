@@ -1,7 +1,7 @@
 ---
 - name: Playbook to add or remove sudo access for a user
   hosts: "{{ hostlist | default('all') }}"
-#  become: True
+  become: True
   vars:
     username: ""
     require_password: true
