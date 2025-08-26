@@ -7,18 +7,18 @@
 
   tasks:
     - name: Ensure firewalld is installed
-      package:
+      ansible.builtin.dnf:
         name: firewalld
         state: installed
 
     - name: Ensure firewalld is enabled and started
-      service:
+      ansible.builtin.service:
         name: firewalld
         enabled: True
         state: started
 
     - name: Ensure firewall ports are open
-      firewalld:
+      ansible.builtin.firewalld:
         immediate: True
         permanent: True
         service: "{{ item }}"
@@ -29,28 +29,28 @@
         - "https"
 
     - name: Ensure apache is installed
-      package:
+      ansible.builtin.dnf:
         name: httpd
         state: present
       notify: Restart httpd
 
     - name: Ensure message is in index.html file
-      copy:
+      ansible.builtin.copy:
         content: "{{ web_content }}"
         dest: /var/www/html/index.html
 
     - name: Show website address
-      debug:
+      ansible.builtin.debug:
         msg: http://{{ ansible_host }}
 
   handlers:
     - name: Restart firewalld
-      service:
+      ansible.builtin.service:
         name: firewalld
         state: restarted
 
     - name: Restart httpd
-      service:
+      ansible.builtin.service:
         enabled: True
         name: httpd
         state: restarted
