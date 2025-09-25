@@ -1,7 +1,7 @@
 ---
 - name: Register system to Red Hat Insights
   hosts: "{{ hostlist | default('all') }}"
-  become: true
+#  become: true
 
   tasks:
     - name: Stop the play if the host is not a Red Hat system
@@ -32,9 +32,11 @@
         pkg_list:
           - insights-client
           - yara
+      become: true
 
     - name: Ensure system is registered
       command: insights-client --register
+      become: true
 
 #    - name: Block to enable malware detection for RHEL 8+ systems
 #      block:
