@@ -1,9 +1,13 @@
 ---
 - name: Ensure Red Hat Web Console (Cockpit) is installed and configured
   hosts: "{{ hostlist | default('all') }}"
-  become: True
+  become: true
 
   tasks:
+    - name: Stop the play if the host is not a Red Hat system
+      ansible.builtin.meta: end_host
+      when: ansible_facts['os_family'] is not defined or ansible_facts['os_family'] != "RedHat"     # Other options: Windows, Darwin
+
     - name: Ensure proper software is installed
       package:
         name: "{{ cockpit_packages }}"
